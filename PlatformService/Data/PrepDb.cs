@@ -1,22 +1,37 @@
-﻿using PlatformService.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PlatformService.Models;
 
 namespace PlatformService.Data
 {
     public static class PrepDb
     {
-        public static void PrepPopulation(IApplicationBuilder app)
+        public static void PrepPopulation(IApplicationBuilder app, bool isProduction)
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
+                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProduction);
             }
         }
 
-        private static void SeedData(AppDbContext context)
+        private static void SeedData(AppDbContext context, bool isProduction)
         {
+            if (isProduction)
+            {
+                Console.WriteLine("--> Applying migrations");
+
+                try
+                {
+                    context.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Error occured while migrating: {ex}");
+                }
+            }
+
             if (!context.Platforms.Any())
             {
-                Console.WriteLine("INFO: Seeding data...");
+                Console.WriteLine("--> Seeding data...");
 
                 context.Platforms.AddRange(
                     new Platform { Name = "DotNet", Publisher = "Microsoft", Cost = "Free" },
@@ -30,6 +45,7 @@ namespace PlatformService.Data
             {
                 Console.WriteLine("INFO: Data already exists");
             }
+
         }
     }
 }
