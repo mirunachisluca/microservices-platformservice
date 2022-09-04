@@ -3,8 +3,9 @@
 Les Jackson - .NET Microservices course (https://youtu.be/DgVjEo3OGBI)
 
 ### Platform Service
-This service is a .NET 6 Web API which implements GET and POST operations for the platform resource. This service uses a SQL Server database.
-The POST operation, apart from adding the new resource to the database, also publishes a message to the message queue to be processed by the Command service.
+This service is a .NET 6 Web API which implements GET and POST operations for the platform resource.
+* uses a SQL Server database
+* publishes a message to the message queue to be processed by the Command service when a new platform is added using the POST method
 
 ### Kubernetes architecture
 
